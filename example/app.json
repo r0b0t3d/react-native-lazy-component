@@ -1,0 +1,22 @@
+{
+  "name": "@r0b0t3d/react-native-lazy-component-example",
+  "displayName": "ReactNativeLazyComponent Example",
+  "expo": {
+    "name": "@r0b0t3d/react-native-lazy-component-example",
+    "slug": "r0b0t3d-react-native-lazy-component-example",
+    "description": "Example app for @r0b0t3d/react-native-lazy-component",
+    "privacy": "public",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
