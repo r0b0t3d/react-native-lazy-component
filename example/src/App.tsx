@@ -1,13 +1,12 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import ReactNativeLazyComponent from '@r0b0t3d/react-native-lazy-component';
 
 export default function App() {
   const [result, setResult] = React.useState<number | undefined>();
 
   React.useEffect(() => {
-    ReactNativeLazyComponent.multiply(3, 7).then(setResult);
+    setResult(0);
   }, []);
 
   return (
