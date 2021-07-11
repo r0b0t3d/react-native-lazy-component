@@ -85,5 +85,6 @@ const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    height: 100,
   },
 });
