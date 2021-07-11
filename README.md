@@ -1,6 +1,7 @@
 # @r0b0t3d/react-native-lazy-component
 
 ✅ Your screen slow to load
+
 ✅ Your screen has a lot of heavy components but just use some at a time
 
 👇
@@ -13,6 +14,7 @@ yarn add @r0b0t3d/react-native-lazy-component
 ## Key features
 
 ✅ Lazy load component when needed
+
 ✅ Type checked
 
 ## Usage
