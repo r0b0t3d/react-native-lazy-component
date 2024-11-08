@@ -22,6 +22,7 @@ type Props<T extends ComponentType<any>> = {
   loadingColor?: string;
   placeholder?: ReactElement;
   onReady?: () => void;
+  timeout?: number;
 };
 
 export default function LazyComponent<T extends ComponentType<any>>({
@@ -31,6 +32,7 @@ export default function LazyComponent<T extends ComponentType<any>>({
   loadingColor,
   placeholder,
   onReady,
+  timeout = 100,
   ...props
 }: Props<T> & ComponentProps<T>) {
   const [ready, setReady] = useState(false);
@@ -45,11 +47,13 @@ export default function LazyComponent<T extends ComponentType<any>>({
     if (!ref.current) {
       ref.current = await savedLoad.current();
     }
-    setReady(true);
-    if (onReady) {
-      onReady();
-    }
-  }, [onReady]);
+    setTimeout(() => {
+      setReady(true);
+      if (onReady) {
+        onReady();
+      }
+    }, timeout);
+  }, [onReady, timeout]);
 
   useEffect(() => {
     if (visible) {
@@ -83,8 +87,8 @@ export default function LazyComponent<T extends ComponentType<any>>({
 
 const styles = StyleSheet.create({
   loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 100,
   },
 });
