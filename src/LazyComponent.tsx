@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import Fade from './Fade';
 
 type Props<T extends ComponentType<any>> = {
   visible?: boolean;
@@ -67,22 +68,21 @@ export default function LazyComponent<T extends ComponentType<any>>({
   if (!visible) {
     return null;
   }
-  if (!ready) {
-    if (placeholder) {
-      return placeholder;
-    }
-    return (
-      <View style={[styles.loadingContainer, loadingContainerStyle]}>
-        <ActivityIndicator color={loadingColor} />
-      </View>
-    );
-  }
   const Component = ref.current?.default;
-
-  if (Component) {
-    return <Component {...props} />;
-  }
-  return null;
+  return (
+    <Fade
+      visible={ready}
+      placeholder={
+        placeholder ?? (
+          <View style={[styles.loadingContainer, loadingContainerStyle]}>
+            <ActivityIndicator color={loadingColor} />
+          </View>
+        )
+      }
+    >
+      {Component && <Component {...props} />}
+    </Fade>
+  );
 }
 
 const styles = StyleSheet.create({
