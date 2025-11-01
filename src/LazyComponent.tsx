@@ -71,6 +71,7 @@ export default function LazyComponent<T extends ComponentType<any>>({
   const Component = ref.current?.default;
   return (
     <Fade
+      style={styles.container}
       visible={ready}
       placeholder={
         placeholder ?? (
@@ -86,6 +87,9 @@ export default function LazyComponent<T extends ComponentType<any>>({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
