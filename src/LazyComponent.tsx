@@ -74,26 +74,24 @@ export default function LazyComponent<T extends ComponentType<any>>({
   }
   const Component = ref.current?.default;
   return (
-    <Fade
-      style={styles.container}
-      visible={ready}
-      placeholder={
-        placeholder ?? (
-          <View style={[styles.loadingContainer, loadingContainerStyle]}>
-            <ActivityIndicator color={loadingColor} />
-          </View>
-        )
-      }
-    >
+    <>
       {Component && <Component {...props} />}
-    </Fade>
+      <Fade
+        style={StyleSheet.absoluteFill}
+        visible={ready}
+        placeholder={
+          placeholder ?? (
+            <View style={[styles.loadingContainer, loadingContainerStyle]}>
+              <ActivityIndicator color={loadingColor} />
+            </View>
+          )
+        }
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',

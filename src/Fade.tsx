@@ -5,13 +5,7 @@ import Animated, {
   withTiming,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import {
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewProps,
-  ViewStyle,
-} from 'react-native';
+import { StyleProp, ViewProps, ViewStyle } from 'react-native';
 
 type Props = ViewProps & {
   visible: boolean;
@@ -29,7 +23,7 @@ function Fade({
   duration = 300,
   ...rest
 }: Props) {
-  const opacity = useSharedValue(0);
+  const opacity = useSharedValue(1);
   const [internalVisible, setInternalVisible] = useState(visible);
 
   useEffect(() => {
@@ -55,17 +49,15 @@ function Fade({
     };
   });
 
-  if (!internalVisible) {
-    if (placeholder) {
-      return <View style={StyleSheet.absoluteFill}>{placeholder}</View>;
-    }
-    return null;
-  }
-
   return (
-    <Animated.View style={[animatedStyle, style]} {...rest}>
-      {children}
-    </Animated.View>
+    <>
+      {internalVisible && children}
+      {!internalVisible && (
+        <Animated.View style={[animatedStyle, style]} {...rest}>
+          {placeholder}
+        </Animated.View>
+      )}
+    </>
   );
 }
 
