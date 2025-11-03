@@ -24,6 +24,7 @@ type Props<T extends ComponentType<any>> = {
   placeholder?: ReactElement;
   onReady?: () => void;
   timeout?: number;
+  unmountOnHidden?: boolean;
 };
 
 export default function LazyComponent<T extends ComponentType<any>>({
@@ -34,11 +35,12 @@ export default function LazyComponent<T extends ComponentType<any>>({
   placeholder,
   onReady,
   timeout = 100,
+  unmountOnHidden = true,
   ...props
 }: Props<T> & ComponentProps<T>) {
   const [ready, setReady] = useState(false);
   const ref = useRef<any>();
-  const savedLoad = useRef<any>();
+  const savedLoad = useRef<any>(null);
 
   useEffect(() => {
     savedLoad.current = load;
@@ -47,25 +49,27 @@ export default function LazyComponent<T extends ComponentType<any>>({
   const loadComponent = useCallback(async () => {
     if (!ref.current) {
       ref.current = await savedLoad.current();
-    }
-    setTimeout(() => {
+      setTimeout(() => {
+        setReady(true);
+        if (onReady) {
+          onReady();
+        }
+      }, timeout);
+    } else {
       setReady(true);
-      if (onReady) {
-        onReady();
-      }
-    }, timeout);
+    }
   }, [onReady, timeout]);
 
   useEffect(() => {
     if (visible) {
       loadComponent();
-    } else {
+    } else if (unmountOnHidden) {
       setReady(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
-  if (!visible) {
+  if (!visible && unmountOnHidden) {
     return null;
   }
   const Component = ref.current?.default;
