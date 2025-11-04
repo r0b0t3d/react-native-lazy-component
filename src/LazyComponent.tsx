@@ -1,11 +1,11 @@
-import React, {
-  useEffect,
-  useState,
+import React from 'react';
+import {
   ReactElement,
-  useRef,
   ComponentType,
-  useCallback,
   ComponentProps,
+  lazy,
+  Suspense,
+  useMemo,
 } from 'react';
 import {
   View,
@@ -14,7 +14,6 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import Fade from './Fade';
 
 type Props<T extends ComponentType<any>> = {
   visible?: boolean;
@@ -22,8 +21,6 @@ type Props<T extends ComponentType<any>> = {
   loadingContainerStyle?: StyleProp<ViewStyle>;
   loadingColor?: string;
   placeholder?: ReactElement;
-  onReady?: () => void;
-  timeout?: number;
   unmountOnHidden?: boolean;
 };
 
@@ -33,61 +30,29 @@ export default function LazyComponent<T extends ComponentType<any>>({
   loadingContainerStyle,
   loadingColor,
   placeholder,
-  onReady,
-  timeout = 100,
   unmountOnHidden = true,
   ...props
 }: Props<T> & ComponentProps<T>) {
-  const [ready, setReady] = useState(false);
-  const ref = useRef<any>();
-  const savedLoad = useRef<any>(null);
-
-  useEffect(() => {
-    savedLoad.current = load;
-  }, [load]);
-
-  const loadComponent = useCallback(async () => {
-    if (!ref.current) {
-      ref.current = await savedLoad.current();
-      setTimeout(() => {
-        setReady(true);
-        if (onReady) {
-          onReady();
-        }
-      }, timeout);
-    } else {
-      setReady(true);
-    }
-  }, [onReady, timeout]);
-
-  useEffect(() => {
-    if (visible) {
-      loadComponent();
-    } else if (unmountOnHidden) {
-      setReady(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  const Component = useMemo(() => lazy(() => load()), [load]);
 
   if (!visible && unmountOnHidden) {
     return null;
   }
-  const Component = ref.current?.default;
+
   return (
-    <>
+    <Suspense
+      fallback={
+        placeholder ? (
+          <View style={styles.loadingContainer}>{placeholder}</View>
+        ) : (
+          <View style={[styles.loadingContainer, loadingContainerStyle]}>
+            <ActivityIndicator color={loadingColor} />
+          </View>
+        )
+      }
+    >
       {Component && <Component {...props} />}
-      <Fade
-        style={StyleSheet.absoluteFill}
-        visible={ready}
-        placeholder={
-          placeholder ?? (
-            <View style={[styles.loadingContainer, loadingContainerStyle]}>
-              <ActivityIndicator color={loadingColor} />
-            </View>
-          )
-        }
-      />
-    </>
+    </Suspense>
   );
 }
 
