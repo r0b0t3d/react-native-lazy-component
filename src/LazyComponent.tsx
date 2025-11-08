@@ -33,7 +33,8 @@ export default function LazyComponent<T extends ComponentType<any>>({
   unmountOnHidden = true,
   ...props
 }: Props<T> & ComponentProps<T>) {
-  const Component = useMemo(() => lazy(() => load()), [load]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const Component = useMemo(() => lazy(() => load()), []);
 
   if (!visible && unmountOnHidden) {
     return null;
